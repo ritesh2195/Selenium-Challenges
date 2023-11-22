@@ -1,9 +1,6 @@
 package Challenges;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.time.Duration;
@@ -11,26 +8,32 @@ import java.util.List;
 
 public class SelectFilter {
 
+    static WebDriver driver;
+
     public static void main(String[] args) throws InterruptedException {
 
-        //selectFilter("Brands", "Alcatel", "Apple");
-
-        //selectFilter("Brands","Alcatel","Apple","Samsung");
-
-        selectFilter("Operating System","all");
-    }
-
-    public static void selectFilter(String ...options) throws InterruptedException {
-
-        WebDriver driver = new ChromeDriver();
+        driver = new ChromeDriver();
 
         driver.manage().window().maximize();
-
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
         driver.get("https://www.t-mobile.com/tablets?INTNAV=tNav:Devices:Tablets");
 
         Thread.sleep(5000);
+
+        //selectFilter("Brands","Alcatel","TCL","Samsung");
+
+        //selectFilter("Brands","TCL");
+
+        selectFilter("Deals","New","Special offer");
+
+        //selectFilter("Operating System","all");
+
+        //selectFilter("Operating System","Android","iPadOS");
+
+        driver.close();
+    }
+
+    public static void selectFilter(String ...options) throws InterruptedException {
 
         JavascriptExecutor driver1 = (JavascriptExecutor) driver;
 
@@ -40,7 +43,9 @@ public class SelectFilter {
 
             if (filter.getText().equalsIgnoreCase(options[0])){
 
-                driver1.executeScript("arguments[0].click()",filter);
+                //driver1.executeScript("arguments[0].click()",filter);
+
+                filter.click();
 
                 if (options[1].equalsIgnoreCase("all")){
 
@@ -48,7 +53,14 @@ public class SelectFilter {
 
                     for (WebElement filterOption:filterOptions){
 
-                        driver1.executeScript("arguments[0].click()",filterOption);
+                        try {
+
+                            filterOption.click();
+
+                        }catch (ElementClickInterceptedException e){
+
+                            driver1.executeScript("arguments[0].click()",filterOption);
+                        }
                     }
                 }
 
@@ -60,7 +72,15 @@ public class SelectFilter {
 
                         WebElement element = driver.findElement(By.xpath("//span[contains(text(),'"+text+"')]//ancestor::mat-checkbox//input"));
 
-                        driver1.executeScript("arguments[0].click()",element);
+                        try {
+
+                            element.click();
+
+                        }catch (ElementClickInterceptedException e){
+
+                            driver1.executeScript("arguments[0].click()",element);
+                        }
+
                     }
                 }
             }
